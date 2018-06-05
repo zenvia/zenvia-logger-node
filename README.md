@@ -6,7 +6,7 @@ Logging library for node applications. This lib follows the requiriments specifi
 ## Install ##
 
 ```js
-npm install bitbucket:zenvia-sms/node-zcc-logger#v1.0.0
+npm install bitbucket:zenvia-sms/node-zcc-logger#1.0.0
 ```
 
 ## Usage ##
