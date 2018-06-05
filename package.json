@@ -7,6 +7,11 @@
     "lint": "eslint **/*.js",
     "lint:fix": "eslint **/*.js --fix"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:zenvia-sms/node-zcc-logger.git"
+  },
+  "main": "./src/lib/logger",
   "dependencies": {
     "winston": "^2.4.2"
   },
