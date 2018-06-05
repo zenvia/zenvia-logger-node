@@ -12,7 +12,7 @@ npm install bitbucket:zenvia-sms/node-zcc-logger#1.0.0
 ## Usage ##
 
 ```js
-const logger = require('node-zcc-logger');
+const logger = require('zcc-logger');
 
 logger.info('some message');
 ```
