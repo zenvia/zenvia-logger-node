@@ -78,7 +78,7 @@ Output:
 }
 ```
 
-Due to limitations of winston lib, when a text, an error and extra key/value fields add logged at once, the output message field will contain the text message, the error message and the full stack trace as shown.
+Due to limitations of winston lib, when a text, an error and extra key/value fields are logged at once, the output message field will contain the text message, the error message and the full stack trace as shown.
 
 ```js
 logger.fatal('Ops!', new Error('Something goes wrong'), { keyA: 'value A', keyB: 'value B' });
