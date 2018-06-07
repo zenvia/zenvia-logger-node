@@ -1,4 +1,4 @@
-# NODE ZCC LOGGER #
+# Node ZCC Logger #
 
 Logging library for node applications. This lib follows the requiriments specified by
 [SRE Team](https://sites.google.com/bewireless.com.br/sre/logs).
@@ -8,6 +8,35 @@ Logging library for node applications. This lib follows the requiriments specifi
 ```js
 npm install bitbucket:zenvia-sms/node-zcc-logger#1.0.0
 ```
+
+## How to deploy your application that uses zcc-logger ##
+
+Since this lib is hosted on Bitbucket, when the `npm install` runs in the deploy operation generally lead to an `npm ERR! Host key verification failed.` error.
+
+To fix this, is necessary to propagate the private key from Jenkins servers to Docker image to be built. This can be achieved adding the follow line in Jenkinsfile:
+
+```groovy
+sh("cp ~/.ssh/id_rsa id_rsa")
+```
+
+And add these two lines in Dockerfile before runs `npm install` command:
+
+```sh
+COPY id_rsa /root/.ssh/id_rsa
+RUN ssh-keyscan -t rsa bitbucket.org > ~/.ssh/known_hosts
+```
+
+## Environment Variables ##
+
+The following environment variable is **required**:
+
+- **APP_NAME**: value to filled the "application" field in the output JSON.
+
+The following environment variables are optional:
+
+- **NODE_ENV**: value to filled the "environment" field in the output JSON.
+- **HOST**: value to filled the "host" field in the output JSON.
+
 
 ## Usage ##
 
@@ -96,14 +125,3 @@ Output:
   "level": "FATAL"
 }
 ```
-
-## Environment Variables ##
-
-The following environment variable is **required**:
-
-- **APP_NAME**: value to filled the "application" field in the output JSON.
-
-The following environment variables are optional:
-
-- **NODE_ENV**: value to filled the "environment" field in the output JSON.
-- **HOST**: value to filled the "host" field in the output JSON.
