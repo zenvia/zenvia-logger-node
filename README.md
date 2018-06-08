@@ -28,15 +28,12 @@ RUN ssh-keyscan -t rsa bitbucket.org > ~/.ssh/known_hosts
 
 ## Environment Variables ##
 
-The following environment variable is **required**:
+The following environment variables can be used for increase the log information:
 
-- **APP_NAME**: value to filled the "application" field in the output JSON.
-
-The following environment variables are optional:
-
+- **APP_NAME**: value to filled the "application" field in the output JSON. If empty, the **name** attribute on `package.json` will be used instead.
 - **NODE_ENV**: value to filled the "environment" field in the output JSON.
-- **HOST**: value to filled the "host" field in the output JSON.
-
+- **HOST** or **HOSTNAME**: value to filled the "host" field in the output JSON.
+- **LOGGING_LEVEL**: set the level of messages that the zcc-logger should log. Default to `DEBUG`.
 
 ## Usage ##
 
