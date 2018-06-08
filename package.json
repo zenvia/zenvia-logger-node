@@ -13,6 +13,7 @@
   },
   "main": "./src/lib/logger",
   "dependencies": {
+    "app-root-dir": "^1.0.2",
     "winston": "^2.4.2"
   },
   "devDependencies": {

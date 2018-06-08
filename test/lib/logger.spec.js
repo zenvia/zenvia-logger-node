@@ -21,6 +21,22 @@ describe('Logger test', () => {
   });
 
   describe('Logstash format', () => {
+    it('should get application field from package.json', () => {
+      delete process.env.APP_NAME;
+      logger.info('some message');
+      process.env.APP_NAME = 'application-name';
+      const expectedOutput = {
+        '@timestamp': '2018-06-05T18:20:42.345Z',
+        '@version': 1,
+        application: 'zcc-logger',
+        message: 'some message',
+        level: 'INFO',
+      };
+
+      const actualOutput = stdMocks.flush().stdout[0];
+      JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
+    });
+
     it('should log empty message fields when message is not provided', () => {
       logger.info();
       const expectedOutput = {
@@ -124,7 +140,7 @@ describe('Logger test', () => {
     });
   });
 
-  describe('Log level', () => {
+  describe('Logging level', () => {
     it('should log as FATAL level', () => {
       logger.fatal('some message');
       const actualOutput = JSON.parse(stdMocks.flush().stderr[0]);
@@ -171,6 +187,19 @@ describe('Logger test', () => {
 
       const actualOutput = JSON.parse(stdMocks.flush().stdout[0]);
       actualOutput.should.have.property('level').and.be.equal('DEBUG');
+    });
+
+    it('should not log as DEBUG level when logging leval was setted to INFO', () => {
+      delete require.cache[require.resolve('../../src/lib/logger')];
+      process.env.LOGGING_LEVEL = 'INFO';
+      //eslint-disable-next-line
+      const newLogger = require('../../src/lib/logger');
+      newLogger.debug('should not log this message');
+      delete process.env.LOGGING_LEVEL;
+      delete require.cache[require.resolve('../../src/lib/logger')];
+
+      stdMocks.flush().stdout.length.should.be.equal(0);
+      stdMocks.flush().stderr.length.should.be.equal(0);
     });
   });
 });
