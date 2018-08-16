@@ -33,11 +33,18 @@ function formatter(options) {
     }));
 }
 
+function getFormatter() {
+  if (process.env.LOGGING_FORMATTER_DISABLED && process.env.LOGGING_FORMATTER_DISABLED === 'true') {
+    return undefined;
+  }
+  return formatter;
+}
+
 function createConsoleTransport() {
   return new winston.transports.Console({
     level: process.env.LOGGING_LEVEL || 'debug',
     stderrLevels: ['fatal', 'error'],
-    formatter,
+    formatter: getFormatter(),
     handleExceptions: true,
     humanReadableUnhandledException: true,
   });
