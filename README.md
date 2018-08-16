@@ -6,7 +6,7 @@ Logging library for node applications. This lib follows the requiriments specifi
 ## Install ##
 
 ```js
-npm install bitbucket:zenvia-sms/node-zcc-logger#1.0.0
+npm install bitbucket:zenvia-sms/node-zcc-logger#1.1.0
 ```
 
 ## How to deploy your application that uses zcc-logger ##
@@ -34,7 +34,7 @@ The following environment variables can be used for increase the log information
 - **NODE_ENV**: value to filled the "environment" field in the output JSON.
 - **HOST** or **HOSTNAME**: value to filled the "host" field in the output JSON.
 - **LOGGING_LEVEL**: set the level of messages that the zcc-logger should log. Default to `DEBUG`.
-- **LOGGING_FORMATTER_DISABLED**: When `true`, the output logging will not be formatted to JSON. Useful during development time. Default to `false`.
+- **LOGGING_FORMATTER_DISABLED** *(version 1.1.0 and above)*: When `true`, the output logging will not be formatted to JSON. Useful during development time. Default to `false`.
 
 ## Usage ##
 
