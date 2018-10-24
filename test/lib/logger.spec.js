@@ -202,4 +202,19 @@ describe('Logger test', () => {
       stdMocks.flush().stderr.length.should.be.equal(0);
     });
   });
+
+  describe('Logging format', () => {
+    it('should get not format when LOGGING_FORMATTER_DISABLED environment is true', () => {
+      delete require.cache[require.resolve('../../src/lib/logger')];
+      process.env.LOGGING_FORMATTER_DISABLED = 'true';
+      //eslint-disable-next-line
+      const newLogger = require('../../src/lib/logger');
+      newLogger.debug('some message');
+      delete process.env.LOGGING_FORMATTER_DISABLED;
+      delete require.cache[require.resolve('../../src/lib/logger')];
+
+      const actualOutput = stdMocks.flush().stdout[0];
+      actualOutput.should.be.equal('2018-06-05T18:20:42.345Z - debug: some message\n');
+    });
+  });
 });

@@ -45,6 +45,7 @@ function createConsoleTransport() {
     level: process.env.LOGGING_LEVEL || 'debug',
     stderrLevels: ['fatal', 'error'],
     formatter: getFormatter(),
+    timestamp: getFormatter() ? undefined : () => new Date().toISOString(),
     handleExceptions: true,
     humanReadableUnhandledException: true,
   });
