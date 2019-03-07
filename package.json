@@ -51,12 +51,5 @@
   "directories": {
     "test": "test"
   },
-  "keywords": [
-    "zenvia",
-    "winston",
-    "logstash",
-    "json",
-    "logger"
-  ],
   "license": "ISC"
 }
