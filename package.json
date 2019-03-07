@@ -1,5 +1,5 @@
 {
-  "name": "zcc-logger",
+  "name": "@zenvia/zcc-logger",
   "version": "1.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:zenvia-sms/node-zcc-logger.git"
+    "url": "git@github.com:zenvia/node-zcc-logger.git"
   },
   "main": "./src/lib/logger",
   "dependencies": {
@@ -45,5 +45,18 @@
       "html"
     ],
     "all": true
-  }
+  },
+  "description": "Logging library for node applications.",
+  "homepage": "https://github.com/zenvia/node-zcc-logger#readme",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "zenvia",
+    "winston",
+    "logstash",
+    "json",
+    "logger"
+  ],
+  "license": "ISC"
 }
