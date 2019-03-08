@@ -23,7 +23,7 @@
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.6.1",
     "mocha": "^5.2.0",
-    "nyc": "^12.0.2",
+    "nyc": "^13.3.0",
     "sinon": "^2.3.7",
     "sinon-chai": "^2.11.0",
     "std-mocks": "^1.0.1"
