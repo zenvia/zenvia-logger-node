@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 COPY package.json /usr/src/app/
 COPY .eslintrc.json .eslintignore /usr/src/app/
-COPY test /usr/src/app/src
+COPY test /usr/src/app/test
 COPY src /usr/src/app/src
 RUN npm install
 
