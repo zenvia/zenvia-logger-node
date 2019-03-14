@@ -1,6 +1,7 @@
 const stdMocks = require('std-mocks');
 const sinon = require('sinon');
 const logger = require('../../src/lib/logger');
+const os = require('os');
 
 describe('Logger test', () => {
   let brokenClock;
@@ -28,7 +29,8 @@ describe('Logger test', () => {
       const expectedOutput = {
         '@timestamp': '2018-06-05T18:20:42.345Z',
         '@version': 1,
-        application: 'zcc-logger',
+        application: '@zenvia/zcc-logger',
+        host: os.hostname(),
         message: 'some message',
         level: 'INFO',
       };
@@ -43,6 +45,7 @@ describe('Logger test', () => {
         '@timestamp': '2018-06-05T18:20:42.345Z',
         '@version': 1,
         application: 'application-name',
+        host: os.hostname(),
         message: '',
         level: 'INFO',
       };
@@ -57,6 +60,7 @@ describe('Logger test', () => {
         '@timestamp': '2018-06-05T18:20:42.345Z',
         '@version': 1,
         application: 'application-name',
+        host: os.hostname(),
         message: 'some message',
         level: 'INFO',
       };
@@ -73,6 +77,7 @@ describe('Logger test', () => {
         '@timestamp': '2018-06-05T18:20:42.345Z',
         '@version': 1,
         application: 'application-name',
+        host: os.hostname(),
         message: 'some message',
         level: 'INFO',
         environment: 'test',
@@ -129,6 +134,7 @@ describe('Logger test', () => {
         '@timestamp': '2018-06-05T18:20:42.345Z',
         '@version': 1,
         application: 'application-name',
+        host: os.hostname(),
         message: 'some message',
         level: 'INFO',
         some: 'extra field',
