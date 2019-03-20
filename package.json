@@ -1,6 +1,6 @@
 {
   "name": "@zenvia/zcc-logger",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": false,
   "scripts": {
     "test": "nyc mocha ./test",
@@ -46,7 +46,7 @@
     ],
     "all": true
   },
-  "description": "Logging library for node applications.",
+  "description": "A wrapper for Winston Logging node library that formats the output on STDOUT as Logstash JSON format.",
   "homepage": "https://github.com/zenvia/node-zcc-logger#readme",
   "directories": {
     "test": "test"
