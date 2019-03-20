@@ -1,5 +1,5 @@
 # Node ZCC Logger #
-Logging library for node applications.
+A wrapper for Winston Logging node library that formats the output on STDOUT as Logstash JSON format.
 
 
 ## Install ##
