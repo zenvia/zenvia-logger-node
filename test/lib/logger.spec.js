@@ -4,24 +4,35 @@ const logger = require('../../src/lib/logger');
 const os = require('os');
 
 describe('Logger test', () => {
+
   let brokenClock;
+  let hostnameStub;
+
   before(() => {
     process.env.APP_NAME = 'application-name';
     stdMocks.use({ print: true });
     brokenClock = sinon.useFakeTimers(new Date('2018-06-05T18:20:42.345Z').getTime());
+    hostnameStub = sinon.stub(os, 'hostname');
   });
 
   beforeEach(() => {
     stdMocks.flush();
+    hostnameStub.returns(process.env.HOST || process.env.HOSTNAME);
   });
 
   after(() => {
     delete process.env.APP_NAME;
     stdMocks.restore();
     brokenClock.restore();
+    hostnameStub.restore();
+  });
+
+  afterEach(() => {
+    hostnameStub.reset();
   });
 
   describe('Logstash format', () => {
+
     it('should get application field from package.json', () => {
       delete process.env.APP_NAME;
       logger.info('some message');
@@ -144,9 +155,11 @@ describe('Logger test', () => {
       const actualOutput = stdMocks.flush().stdout[0];
       JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
     });
+
   });
 
   describe('Logging level', () => {
+
     it('should log as FATAL level', () => {
       logger.fatal('some message');
       const actualOutput = JSON.parse(stdMocks.flush().stderr[0]);
@@ -207,9 +220,11 @@ describe('Logger test', () => {
       stdMocks.flush().stdout.length.should.be.equal(0);
       stdMocks.flush().stderr.length.should.be.equal(0);
     });
+
   });
 
   describe('Logging format', () => {
+
     it('should get not format when LOGGING_FORMATTER_DISABLED environment is true', () => {
       delete require.cache[require.resolve('../../src/lib/logger')];
       process.env.LOGGING_FORMATTER_DISABLED = 'true';
@@ -222,5 +237,7 @@ describe('Logger test', () => {
       const actualOutput = stdMocks.flush().stdout[0];
       actualOutput.should.be.equal('2018-06-05T18:20:42.345Z - debug: some message\n');
     });
+
   });
+
 });
