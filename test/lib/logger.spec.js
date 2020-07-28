@@ -17,7 +17,10 @@ describe('Logger test', () => {
 
   beforeEach(() => {
     stdMocks.flush();
-    hostnameStub.returns(process.env.HOST || process.env.HOSTNAME || undefined);
+    const host = process.env.HOST || process.env.HOSTNAME;
+    if (host) {
+      hostnameStub.returns(host);
+    }
   });
 
   after(() => {
