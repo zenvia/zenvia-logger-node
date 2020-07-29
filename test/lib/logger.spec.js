@@ -15,6 +15,8 @@ describe('Logger test', () => {
 
   beforeEach(() => {
     stdMocks.flush();
+
+    // This is necessary for Travis to work.
     if (!process.env.HOSTNAME) {
       process.env.HOSTNAME = os.hostname();
     }
