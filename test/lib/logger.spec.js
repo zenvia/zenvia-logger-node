@@ -6,20 +6,17 @@ const os = require('os');
 describe('Logger test', () => {
 
   let brokenClock;
-  let hostnameStub;
 
   before(() => {
     process.env.APP_NAME = 'application-name';
     stdMocks.use({ print: true });
     brokenClock = sinon.useFakeTimers(new Date('2018-06-05T18:20:42.345Z').getTime());
-    hostnameStub = sinon.stub(os, 'hostname');
   });
 
   beforeEach(() => {
     stdMocks.flush();
-    const host = process.env.HOST || process.env.HOSTNAME;
-    if (host) {
-      hostnameStub.returns(host);
+    if (!process.env.HOSTNAME) {
+      process.env.HOSTNAME = os.hostname();
     }
   });
 
@@ -27,11 +24,6 @@ describe('Logger test', () => {
     delete process.env.APP_NAME;
     stdMocks.restore();
     brokenClock.restore();
-    hostnameStub.restore();
-  });
-
-  afterEach(() => {
-    hostnameStub.reset();
   });
 
   describe('Logstash format', () => {
