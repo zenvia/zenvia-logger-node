@@ -9,4 +9,4 @@ chai.use(chaiAsPromised);
 chai.should();
 
 global.expect = chai.expect;
-process.env.TZ = 'America/Sao_Paulo';
+process.env.TZ = 'UTC';

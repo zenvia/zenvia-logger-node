@@ -1,16 +1,16 @@
 {
-    "extends": "airbnb-base",
-    "parserOptions": {
-        "ecmaVersion": 2017
-    },
-    "env": {
-        "node": true,
-        "mocha": true
-    },
-    "globals": {
-        "expect": true
-    },
-    "rules": {
-      "max-len": [2, 170, 4]
-    }
+  "extends": "airbnb-base",
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "globals": {
+    "expect": true
+  },
+  "rules": {
+    "max-len": [2, 170, 4]
+  }
 }
