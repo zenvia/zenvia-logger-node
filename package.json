@@ -1,7 +1,7 @@
 {
   "name": "@zenvia/zcc-logger",
   "description": "A wrapper for Winston Logging node library that formats the output on STDOUT as Logstash JSON format.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "license": "MIT",
   "main": "./src/lib/logger",
   "private": false,
