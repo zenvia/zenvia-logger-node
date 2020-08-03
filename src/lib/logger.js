@@ -24,7 +24,7 @@ function formatter(options) {
     {
       '@timestamp': new Date().toISOString(),
       '@version': 1,
-      application: process.env.APP_NAME || appPackage.name,
+      application: options.meta.application || process.env.APP_NAME || appPackage.name,
       environment: process.env.NODE_ENV,
       host: process.env.HOST || process.env.HOSTNAME,
       message: options.message || '',

@@ -153,6 +153,23 @@ describe('Logger test', () => {
       JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
     });
 
+    it('should log required and application extra field', () => {
+      logger.info({ application: 'some-application', message: 'some message', some: 'extra field', another: 'field' });
+      const expectedOutput = {
+        '@timestamp': '2018-06-05T18:20:42.345Z',
+        '@version': 1,
+        application: 'some-application',
+        host: os.hostname(),
+        message: 'some message',
+        level: 'INFO',
+        some: 'extra field',
+        another: 'field',
+      };
+
+      const actualOutput = stdMocks.flush().stdout[0];
+      JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
+    });
+
   });
 
   describe('Logging level', () => {
