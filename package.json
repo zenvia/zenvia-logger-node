@@ -1,6 +1,6 @@
 {
   "name": "@zenvia/logger",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "A wrapper for Winston Logging Node.js library that formats the output on STDOUT as Logstash JSON format.",
   "license": "MIT",
   "main": "./src/lib/logger",
@@ -12,10 +12,10 @@
     "Rodrigo Kamada <rodrigo.kamada@zenvia.com> (https://github.com/rodrigokamada)"
   ],
   "scripts": {
-    "test": "nyc mocha ./test",
+    "test": "nyc mocha",
     "test:coveralls": "nyc mocha ./test && nyc report --reporter=text-lcov | coveralls",
-    "lint": "eslint **/*.js",
-    "lint:fix": "eslint **/*.js --fix"
+    "lint": "eslint '**/*.js'",
+    "lint:fix": "eslint '**/*.js' --fix"
   },
   "homepage": "https://github.com/zenvia/zenvia-logger-node#readme",
   "repository": {
@@ -33,19 +33,19 @@
   ],
   "dependencies": {
     "app-root-dir": "^1.0.2",
-    "winston": "^2.4.2"
+    "winston": "^3.3.3"
   },
   "devDependencies": {
-    "chai": "^4.0.2",
+    "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.1.0",
-    "eslint": "^4.18.2",
-    "eslint-config-airbnb-base": "^11.2.0",
-    "eslint-plugin-import": "^2.6.1",
-    "mocha": "^5.2.0",
-    "nyc": "^13.3.0",
-    "sinon": "^2.3.7",
-    "sinon-chai": "^2.11.0",
+    "eslint": "^7.6.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "mocha": "^8.1.0",
+    "nyc": "^15.1.0",
+    "sinon": "^9.0.2",
+    "sinon-chai": "^3.5.0",
     "std-mocks": "^1.0.1"
   },
   "nyc": {

@@ -1,10 +1,9 @@
+const os = require('os');
 const stdMocks = require('std-mocks');
 const sinon = require('sinon');
 const logger = require('../../src/lib/logger');
-const os = require('os');
 
 describe('Logger test', () => {
-
   let brokenClock;
 
   before(() => {
@@ -29,7 +28,6 @@ describe('Logger test', () => {
   });
 
   describe('Logstash format', () => {
-
     it('should get application field from package.json', () => {
       delete process.env.APP_NAME;
       logger.info('some message');
@@ -119,7 +117,7 @@ describe('Logger test', () => {
       actualOutput.should.have.property('@timestamp').and.be.equal('2018-06-05T18:20:42.345Z');
       actualOutput.should.have.property('@version').and.be.equal(1);
       actualOutput.should.have.property('application').and.be.equal('application-name');
-      actualOutput.should.have.property('message').and.be.equal('some message: some reason');
+      actualOutput.should.have.property('message').and.be.equal('some message some reason');
       actualOutput.should.have.property('level').and.be.equal('INFO');
       actualOutput.should.have.property('stack_trace');
     });
@@ -154,7 +152,12 @@ describe('Logger test', () => {
     });
 
     it('should log required and application extra field', () => {
-      logger.info({ application: 'some-application', message: 'some message', some: 'extra field', another: 'field' });
+      logger.info({
+        application: 'some-application',
+        message: 'some message',
+        some: 'extra field',
+        another: 'field',
+      });
       const expectedOutput = {
         '@timestamp': '2018-06-05T18:20:42.345Z',
         '@version': 1,
@@ -169,11 +172,9 @@ describe('Logger test', () => {
       const actualOutput = stdMocks.flush().stdout[0];
       JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
     });
-
   });
 
   describe('Logging level', () => {
-
     it('should log as FATAL level', () => {
       logger.fatal('some message');
       const actualOutput = JSON.parse(stdMocks.flush().stderr[0]);
@@ -225,7 +226,7 @@ describe('Logger test', () => {
     it('should not log as DEBUG level when logging leval was setted to INFO', () => {
       delete require.cache[require.resolve('../../src/lib/logger')];
       process.env.LOGGING_LEVEL = 'INFO';
-      //eslint-disable-next-line
+      // eslint-disable-next-line
       const newLogger = require('../../src/lib/logger');
       newLogger.debug('should not log this message');
       delete process.env.LOGGING_LEVEL;
@@ -234,15 +235,13 @@ describe('Logger test', () => {
       stdMocks.flush().stdout.length.should.be.equal(0);
       stdMocks.flush().stderr.length.should.be.equal(0);
     });
-
   });
 
   describe('Logging format', () => {
-
     it('should get not format when LOGGING_FORMATTER_DISABLED environment is true', () => {
       delete require.cache[require.resolve('../../src/lib/logger')];
       process.env.LOGGING_FORMATTER_DISABLED = 'true';
-      //eslint-disable-next-line
+      // eslint-disable-next-line
       const newLogger = require('../../src/lib/logger');
       newLogger.debug('some message');
       delete process.env.LOGGING_FORMATTER_DISABLED;
@@ -251,7 +250,5 @@ describe('Logger test', () => {
       const actualOutput = stdMocks.flush().stdout[0];
       actualOutput.should.be.equal('2018-06-05T18:20:42.345Z - debug: some message\n');
     });
-
   });
-
 });
