@@ -1,26 +1,36 @@
 {
-  "name": "@zenvia/zcc-logger",
-  "description": "A wrapper for Winston Logging node library that formats the output on STDOUT as Logstash JSON format.",
+  "name": "@zenvia/logger",
   "version": "1.3.2",
+  "description": "A wrapper for Winston Logging Node.js library that formats the output on STDOUT as Logstash JSON format.",
   "license": "MIT",
   "main": "./src/lib/logger",
   "private": false,
   "publishConfig": {
     "access": "public"
   },
+  "contributors": [
+    "Rodrigo Kamada <rodrigo.kamada@zenvia.com> (https://github.com/rodrigokamada)"
+  ],
   "scripts": {
     "test": "nyc mocha ./test",
+    "test:coveralls": "nyc mocha ./test && nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint **/*.js",
     "lint:fix": "eslint **/*.js --fix"
   },
-  "homepage": "https://github.com/zenvia/node-zcc-logger#readme",
+  "homepage": "https://github.com/zenvia/zenvia-logger-node#readme",
   "repository": {
     "type": "git",
-    "url": "git@github.com:zenvia/node-zcc-logger.git"
+    "url": "git@github.com:zenvia/zenvia-logger-node.git"
   },
   "bugs": {
-    "url": "https://github.com/zenvia/node-zcc-logger/issues"
+    "url": "https://github.com/zenvia/zenvia-logger-node/issues"
   },
+  "keywords": [
+    "Logger",
+    "Logstash",
+    "Zenvia",
+    "Winston"
+  ],
   "dependencies": {
     "app-root-dir": "^1.0.2",
     "winston": "^2.4.2"
@@ -28,6 +38,7 @@
   "devDependencies": {
     "chai": "^4.0.2",
     "chai-as-promised": "^7.1.1",
+    "coveralls": "^3.1.0",
     "eslint": "^4.18.2",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.6.1",
@@ -38,11 +49,11 @@
     "std-mocks": "^1.0.1"
   },
   "nyc": {
-    "include": [
-      "**/*.js"
-    ],
     "extension": [
       ".js"
+    ],
+    "include": [
+      "**/*.js"
     ],
     "exclude": [
       "**/*.spec.js",
@@ -51,8 +62,10 @@
     ],
     "reporter": [
       "text",
-      "html"
+      "html",
+      "lcov"
     ],
+    "cache": false,
     "all": true
   },
   "directories": {

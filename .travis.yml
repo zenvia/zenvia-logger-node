@@ -10,6 +10,9 @@ script:
   - npm run lint
   - npm test
 
+after_success:
+  - npm run test:coveralls
+
 deploy:
   provider: npm
   email: $NPM_EMAIL

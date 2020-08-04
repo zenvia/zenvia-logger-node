@@ -37,7 +37,7 @@ describe('Logger test', () => {
       const expectedOutput = {
         '@timestamp': '2018-06-05T18:20:42.345Z',
         '@version': 1,
-        application: '@zenvia/zcc-logger',
+        application: '@zenvia/logger',
         host: os.hostname(),
         message: 'some message',
         level: 'INFO',
