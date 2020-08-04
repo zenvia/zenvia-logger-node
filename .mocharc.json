@@ -1,0 +1,6 @@
+{
+  "recursive": true,
+  "require": "test/common",
+  "growl": true,
+  "spec": "test/**/*.js"
+}

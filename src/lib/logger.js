@@ -30,7 +30,8 @@ function formatter(options) {
       message: options.message || '',
       level: ['verbose', 'silly'].includes(options.level) ? 'DEBUG' : options.level.toUpperCase(),
       stack_trace: stack,
-    }));
+    },
+  ));
 }
 
 function getFormatter() {
