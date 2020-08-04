@@ -11,10 +11,8 @@ const customFormatJson = winston.format((info) => {
   let stack;
 
   if (info.stack) {
-    if (info.stack) {
-      stack = info.stack;
-      info.stack = undefined;
-    }
+    stack = info.stack;
+    info.stack = undefined;
   }
 
   info = {
