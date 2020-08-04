@@ -117,7 +117,7 @@ describe('Logger test', () => {
       actualOutput.should.have.property('@timestamp').and.be.equal('2018-06-05T18:20:42.345Z');
       actualOutput.should.have.property('@version').and.be.equal(1);
       actualOutput.should.have.property('application').and.be.equal('application-name');
-      actualOutput.should.have.property('message').and.be.equal('some message: some reason');
+      actualOutput.should.have.property('message').and.be.equal('some message some reason');
       actualOutput.should.have.property('level').and.be.equal('INFO');
       actualOutput.should.have.property('stack_trace');
     });
