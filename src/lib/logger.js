@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-dynamic-require */
+/* eslint-disable no-use-before-define */
 
 const winston = require('winston');
 const path = require('path');
@@ -31,38 +32,20 @@ const customFormatJson = winston.format((info) => {
 });
 
 const customCombineJson = winston.format.combine(
-  winston.format.splat(),
   customFormatJson(),
   winston.format.json(),
 );
 
 const customCombineSimple = winston.format.combine(
   winston.format.timestamp(),
-  winston.format.splat(),
   winston.format.printf((info) => (`${info.timestamp} - ${info.level}: ${info.message}`)),
 );
 
-const customErrorFormatter = winston.format((info) => {
-  if (info instanceof Error) {
-    return {
-      message: info.message,
-      stack: info.stack,
-      ...info,
-    };
-  }
-  return info;
-});
-
 const createConsoleTransport = () => new winston.transports.Console({
-  level: process.env.LOGGING_LEVEL || 'debug',
   stderrLevels: ['fatal', 'error'],
-  format: process.env.LOGGING_FORMATTER_DISABLED && process.env.LOGGING_FORMATTER_DISABLED === 'true' ? customCombineSimple : customCombineJson,
-  handleExceptions: true,
-  humanReadableUnhandledException: true,
 });
 
-/* eslint-disable new-cap */
-const logger = new winston.createLogger({
+const logger = winston.createLogger({
   levels: {
     fatal: 0,
     error: 1,
@@ -72,14 +55,52 @@ const logger = new winston.createLogger({
     verbose: 4,
     silly: 4,
   },
-  format: winston.format.combine(
-    customErrorFormatter(),
-    winston.format.json(),
-  ),
+  level: process.env.LOGGING_LEVEL || 'debug',
+  handleExceptions: true,
+  format: process.env.LOGGING_FORMATTER_DISABLED && process.env.LOGGING_FORMATTER_DISABLED === 'true' ? customCombineSimple : customCombineJson,
   transports: [
     createConsoleTransport(),
   ],
   exitOnError: false,
 });
+
+function leveledLogFn(level) {
+  return function log(...args) {
+    return logFn(level, ...args);
+  };
+}
+
+function logFn(level, msg, ...splat) {
+  if (arguments.length === 1 && typeof level !== 'object') {
+    return logger;
+  }
+  if (arguments.length === 2) {
+    if (msg && typeof msg === 'object') {
+      msg = {
+        message: msg.message,
+        stack: msg.stack,
+        ...msg,
+      };
+    }
+  }
+  return logger.realLog(level, msg, ...splat);
+}
+
+function isLevelEnabledFn(level) {
+  return function isLevelEnabled() {
+    return logger.isLevelEnabled(level);
+  };
+}
+
+logger.fatal = leveledLogFn('fatal');
+logger.error = leveledLogFn('error');
+logger.warn = leveledLogFn('warn');
+logger.info = leveledLogFn('info');
+logger.debug = leveledLogFn('debug');
+logger.verbose = leveledLogFn('verbose');
+logger.silly = leveledLogFn('silly');
+logger.isFatalEnabled = isLevelEnabledFn('fatal');
+logger.realLog = logger.log;
+logger.log = logFn;
 
 module.exports = logger;
