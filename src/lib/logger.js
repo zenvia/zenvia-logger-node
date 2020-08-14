@@ -83,7 +83,7 @@ function logFn(level, msg, ...splat) {
       };
     }
   }
-  return logger.log(level, msg, ...splat);
+  return logger.realLog(level, msg, ...splat);
 }
 
 function isLevelEnabledFn(level) {
@@ -92,15 +92,15 @@ function isLevelEnabledFn(level) {
   };
 }
 
-module.exports = {
-  ...logger,
-  log: logFn,
-  fatal: leveledLogFn('fatal'),
-  error: leveledLogFn('error'),
-  warn: leveledLogFn('warn'),
-  info: leveledLogFn('info'),
-  debug: leveledLogFn('debug'),
-  verbose: leveledLogFn('verbose'),
-  silly: leveledLogFn('silly'),
-  isFatalEnabled: isLevelEnabledFn('fatal'),
-};
+logger.fatal = leveledLogFn('fatal');
+logger.error = leveledLogFn('error');
+logger.warn = leveledLogFn('warn');
+logger.info = leveledLogFn('info');
+logger.debug = leveledLogFn('debug');
+logger.verbose = leveledLogFn('verbose');
+logger.silly = leveledLogFn('silly');
+logger.isFatalEnabled = isLevelEnabledFn('fatal');
+logger.realLog = logger.log;
+logger.log = logFn;
+
+module.exports = logger;
