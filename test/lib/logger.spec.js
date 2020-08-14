@@ -45,19 +45,14 @@ describe('Logger test', () => {
       JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
     });
 
-    it('should log empty message fields when message is not provided', () => {
+    it('should log nothing when message is not provided', () => {
       logger.info();
-      const expectedOutput = {
-        '@timestamp': '2018-06-05T18:20:42.345Z',
-        '@version': 1,
-        application: 'application-name',
-        host: os.hostname(),
-        message: '',
-        level: 'INFO',
-      };
+      stdMocks.flush().stdout.length.should.be.equal(0);
+    });
 
-      const actualOutput = stdMocks.flush().stdout[0];
-      JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
+    it('should log nothing when only level provided', () => {
+      logger.log('info');
+      stdMocks.flush().stdout.length.should.be.equal(0);
     });
 
     it('should log @timestamp, application, message and level fields', () => {
@@ -176,6 +171,7 @@ describe('Logger test', () => {
 
   describe('Logging level', () => {
     it('should log as FATAL level', () => {
+      logger.isFatalEnabled().should.be.equal(true);
       logger.fatal('some message');
       const actualOutput = JSON.parse(stdMocks.flush().stderr[0]);
       actualOutput.should.have.property('level').and.be.equal('FATAL');
@@ -249,6 +245,36 @@ describe('Logger test', () => {
 
       const actualOutput = stdMocks.flush().stdout[0];
       actualOutput.should.be.equal('2018-06-05T18:20:42.345Z - debug: some message\n');
+    });
+  });
+
+  describe('Reliability', () => {
+    it('should not mutate the original error object when log this object without any other data', () => {
+      const error = new Error('some reason');
+      error.should.not.have.property('level');
+      logger.info(error);
+      error.should.not.have.property('level');
+    });
+
+    it('should not mutate the original object when log this object without any other data', () => {
+      const obj = { message: 'some value' };
+      obj.should.not.have.property('level');
+      logger.info(obj);
+      obj.should.not.have.property('level');
+    });
+
+    it('should not mutate the original error object when log with level and object', () => {
+      const error = new Error('some reason');
+      error.should.not.have.property('level');
+      logger.log('error', error);
+      error.should.not.have.property('level');
+    });
+
+    it('should not mutate the original object when log with level and object', () => {
+      const obj = { property: 'some value' };
+      obj.should.not.have.property('level');
+      logger.log('info', obj);
+      obj.should.not.have.property('level');
     });
   });
 });
