@@ -45,12 +45,12 @@ describe('Logger test', () => {
       JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
     });
 
-    it('should log nothing when message is not provided', () => {
+    it('should not log when message is not provided', () => {
       logger.info();
       stdMocks.flush().stdout.length.should.be.equal(0);
     });
 
-    it('should log nothing when only level provided', () => {
+    it('should not log when only level provided', () => {
       logger.log('info');
       stdMocks.flush().stdout.length.should.be.equal(0);
     });
