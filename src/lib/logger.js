@@ -1,3 +1,4 @@
+/* eslint-disable prefer-rest-params */
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable no-use-before-define */
@@ -70,7 +71,7 @@ function leveledLogFn(level) {
   };
 }
 
-function logFn(level, msg, ...splat) {
+function logFn(level, msg) {
   if (arguments.length === 1 && typeof level !== 'object') {
     return logger;
   }
@@ -83,7 +84,7 @@ function logFn(level, msg, ...splat) {
       };
     }
   }
-  return logger.realLog(level, msg, ...splat);
+  return logger.realLog(...arguments);
 }
 
 function isLevelEnabledFn(level) {

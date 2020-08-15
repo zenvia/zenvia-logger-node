@@ -170,6 +170,13 @@ describe('Logger test', () => {
   });
 
   describe('Logging level', () => {
+    it('should log with LogEntry', () => {
+      const obj = { level: 'info', message: 'some message', property: 'some value' };
+      logger.log(obj);
+      const actualOutput = JSON.parse(stdMocks.flush().stdout[0]);
+      actualOutput.should.have.property('level').and.be.equal('INFO');
+    });
+
     it('should log as FATAL level', () => {
       logger.isFatalEnabled().should.be.equal(true);
       logger.fatal('some message');
