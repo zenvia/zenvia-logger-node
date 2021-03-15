@@ -1,6 +1,6 @@
 # Zenvia Logger for Node.js
 
-A wrapper for [Winston](https://github.com/winstonjs/winston) Logging [Node.js](https://nodejs.org/) library that formats the output on STDOUT as [Logstash](https://www.elastic.co/logstash) JSON format.
+A wrapper for [Winston](https://github.com/winstonjs/winston) Logging [Node.js](https://nodejs.org/) library that formats the output on STDOUT as [Logstash](https://www.elastic.co/logstash) JSON format. Since version 1.5.0 it is possible to use log tracking. Zenvia Logger uses the [cls-trace](https://www.npmjs.com/package/cls-rtracer) to perform the tracking
 
 [![License](https://img.shields.io/github/license/zenvia/zenvia-logger-node.svg)](LICENSE.md)
 [![Build Status](https://travis-ci.com/zenvia/zenvia-logger-node.svg?branch=master)](https://travis-ci.com/zenvia/zenvia-logger-node)
@@ -28,17 +28,62 @@ The following environment variables can be used for increase the log information
 - **HOST** or **HOSTNAME**: value to filled the "host" field in the output JSON.
 - **LOGGING_LEVEL**: set the level of messages that the logger should log. Default to `DEBUG`.
 - **LOGGING_FORMATTER_DISABLED** *(version 1.1.0 and above)*: When `true`, the output logging will not be formatted to JSON. Useful during development time. Default to `false`.
+- **LOGGING_FRAMEWORK_MIDDLEWARE** *(version 1.5.0 and above)*: Value that defines which middleware will be used. It is possible to choose between the middlewares: EXPRESS, FASTIFY, HAPI and KOA. If empty, the middleware default is `EXPRESS`.
+- **LOGGING_TRACE_HEADER** *(version 1.5.0 and above)*: Value indicating the header name that must be obtained from the traceId value in the request. Default is `X-B3-TraceId`.
 
 
-
-## Basic Usage
+## Basic Usage (Express users)
 
 ```js
-// ES5
-const logger = require('@zenvia/logger');
-
 // ES6 or Typescript
-import * as logger from '@zenvia/logger';
+import express from 'express';
+import logger, { traceMiddleware } from '@zenvia/logger';
+
+const app = express();
+app.use(traceMiddleware);
+
+logger.info('some message');
+```
+## Basic Usage (FASTIFY users)
+
+```js
+// ES6 or Typescript
+import fastify from 'fastify'
+import logger, { traceMiddleware } from '@zenvia/logger';
+
+fastify.register(traceMiddleware);
+
+logger.info('some message');
+```
+## Basic Usage (KOA users)
+
+```js
+// ES6 or Typescript
+import Koa from 'koa';
+import logger, { traceMiddleware } from '@zenvia/logger';
+
+const app = new Koa();
+app.use(traceMiddleware);
+
+logger.info('some message');
+```
+## Basic Usage (HAPI users)
+
+```js
+// ES6 or Typescript
+import Koa from 'koa';
+import logger, { traceMiddleware } from '@zenvia/logger';
+
+const init = async () => {
+  const server = Hapi.server({
+    port: 3000,
+    host: 'localhost'
+  });
+
+  await server.register({
+    plugin: traceMiddleware
+  });
+}
 
 logger.info('some message');
 ```
@@ -51,7 +96,8 @@ Output:
   "@version": 1,
   "application": "application-name",
   "message": "some message",
-  "level": "INFO"
+  "level": "INFO",
+  "traceID": "123e4567-e32b-12d3-a432-626614174888"
 }
 ```
 
@@ -111,7 +157,7 @@ Output:
 Due to limitations of winston lib, when a text, an error and extra key/value fields are logged at once, the output message field will contain the text message, the error message and the full stack trace as shown.
 
 ```js
-logger.fatal('Ops!', new Error('Something goes wrong'), { keyA: 'value A', keyB: 'value B' });
+logger.fatal('Ops!', { new Error('Something goes wrong'), { keyA: 'value A', keyB: 'value B' } });
 ```
 
 Output:
@@ -128,7 +174,49 @@ Output:
 }
 ```
 
+### Using trace logs
+From version 1.5.0 it is possible to track logs. To do traceability, the cls-rTrace package is used. To use it, just add the middleware in the framework you are using. In this way it is possible to propagate the traceId received in a request to the logs throughout your project. If no traceId is passed in the request, Zenvia Logger generates a random traceId for the request being processed.
 
+**Request example sending traceId:**
+```bash
+curl 'http://localhost/your-application' \
+--header 'X-TraceId: dbcdd40e-10cd-40a7-b912-1b0a17483d67' \
+```
+Log
+```javascript
+logger.info('message with traceID');
+```
+Log Output
+```json
+{
+  "@timestamp": "2018-06-05T18:20:42.345Z",
+  "@version": 1,
+  "application": "application-name",
+  "message": "message with traceID",
+  "level": "INFO",
+  "traceID": "dbcdd40e-10cd-40a7-b912-1b0a17483d67'"
+}
+```
+
+**Request example without sending traceId:**
+```bash
+curl 'http://localhost/your-application'
+```
+Log
+```javascript
+logger.info('message without traceID');
+```
+Log Output
+```json
+{
+  "@timestamp": "2018-06-05T18:20:42.345Z",
+  "@version": 1,
+  "application": "application-name",
+  "message": "message with traceID",
+  "level": "INFO",
+  "traceID": "912c029c-c38f-49e7-9968-e575c5108178'"
+}
+```
 
 ## License
 
