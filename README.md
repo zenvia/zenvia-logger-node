@@ -29,7 +29,7 @@ The following environment variables can be used for increase the log information
 - **LOGGING_LEVEL**: set the level of messages that the logger should log. Default to `DEBUG`.
 - **LOGGING_FORMATTER_DISABLED** *(version 1.1.0 and above)*: When `true`, the output logging will not be formatted to JSON. Useful during development time. Default to `false`.
 - **LOGGING_FRAMEWORK_MIDDLEWARE** *(version 1.5.0 and above)*: Value that defines which middleware will be used. It is possible to choose between the middlewares: EXPRESS, FASTIFY, HAPI and KOA. If empty, the middleware default is `EXPRESS`.
-- **LOGGING_TRACE_HEADER** *(version 1.5.0 and above)*: Value indicating the header name that must be obtained from the traceId value in the request. Default is `X-B3-TraceId`.
+- **LOGGING_TRACE_HEADER** *(version 1.5.0 and above)*: Value indicating the header name that must be obtained from the traceId value in the request. Default is `X-TraceId`.
 
 
 ## Basic Usage (Express users)
