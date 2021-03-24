@@ -6,6 +6,7 @@
 const winston = require('winston');
 const path = require('path');
 const appRootDir = require('app-root-dir').get();
+const rTrace = require('cls-rtracer');
 
 const appPackage = require(path.join(appRootDir, 'package'));
 
@@ -27,12 +28,20 @@ const customFormatJson = winston.format((info) => {
     message: info.message || '',
     level: ['verbose', 'silly'].includes(info.level) ? 'DEBUG' : info.level.toUpperCase(),
     stack_trace: stack,
+    traceId: rTrace.id(),
   };
+
+  Object.keys(info).forEach((key) => {
+    if (info[key] instanceof Function) {
+      delete info[key];
+    }
+  });
 
   return info;
 });
 
 const customCombineJson = winston.format.combine(
+  winston.format.splat(),
   customFormatJson(),
   winston.format.json(),
 );

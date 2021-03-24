@@ -1,11 +1,9 @@
-declare module '@zenvia/logger' {
-  import { Logger, LeveledLogMethod } from 'winston';
+import { Logger, LeveledLogMethod } from 'winston';
 
-  interface ZenviaLogger extends Logger {
-    fatal: LeveledLogMethod;
-    isFatalEnabled(): boolean;
-  }
-
-  const logger: ZenviaLogger;
-  export = logger;
+interface ZenviaLogger extends Logger {
+  fatal: LeveledLogMethod;
+  isFatalEnabled(): boolean;
 }
+
+declare const logger: ZenviaLogger;
+export default logger;
