@@ -7,7 +7,7 @@ A wrapper for [Winston](https://github.com/winstonjs/winston) Logging [Node.js](
 [![Coverage Status](https://coveralls.io/repos/github/zenvia/zenvia-logger-node/badge.svg?branch=master)](https://coveralls.io/github/zenvia/zenvia-logger-node?branch=master)
 [![Dependencies](https://img.shields.io/david/zenvia/zenvia-logger-node.svg)](https://david-dm.org/zenvia/zenvia-logger-node)
 
-[![Twitter Follow](https://img.shields.io/twitter/follow/ZenviaMobile.svg?style=social)](https://twitter.com/intent/follow?screen_name=ZenviaMobile)
+[![Twitter Follow](https://img.shields.io/twitter/follow/ZENVIA_.svg?style=social)](https://twitter.com/intent/follow?screen_name=ZENVIA_)
 
 
 
