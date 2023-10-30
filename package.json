@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "app-root-dir": "^1.0.2",
-    "cls-rtracer": "^2.6.0",
+    "cls-rtracer": "^2.6.3",
     "winston": "^3.3.3"
   },
   "devDependencies": {
