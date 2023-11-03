@@ -1,6 +1,6 @@
 {
   "name": "@zenvia/logger",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "A wrapper for Winston Logging Node.js library that formats the output on STDOUT as Logstash JSON format.",
   "license": "MIT",
   "main": "./src/index",
@@ -33,8 +33,8 @@
   ],
   "dependencies": {
     "app-root-dir": "^1.0.2",
-    "cls-rtracer": "^2.6.0",
-    "winston": "^3.3.3"
+    "cls-rtracer": "^2.6.3",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

@@ -1,5 +1,2 @@
-import logger from './lib/logger';
-import middleware from './middleware/trace';
-
-export default logger;
-export const traceMiddleware = middleware();
+export { default } from './lib/logger';
+export { default as traceMiddleware } from './middleware/trace';
