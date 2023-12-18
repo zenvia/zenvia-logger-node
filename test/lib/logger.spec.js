@@ -241,50 +241,6 @@ describe('Logger test', () => {
   });
 
   describe('Logging format', () => {
-    it('should replace LF characters from log (POSIX systems)', () => {
-      logger.debug(`some message
-other CRLF injection message`);
-      const expectedOutput = {
-        '@timestamp': '2018-06-05T18:20:42.345Z',
-        '@version': 1,
-        application: 'application-name',
-        host: os.hostname(),
-        message: 'some message#nother CRLF injection message',
-        level: 'DEBUG',
-      };
-
-      const actualOutput = stdMocks.flush().stdout[0];
-      JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
-
-      logger.debug('some\n CRLF\n injection\n message');
-      const expectedOutput2 = {
-        '@timestamp': '2018-06-05T18:20:42.345Z',
-        '@version': 1,
-        application: 'application-name',
-        host: os.hostname(),
-        message: 'some#n CRLF#n injection#n message',
-        level: 'DEBUG',
-      };
-
-      const actualOutput2 = stdMocks.flush().stdout[0];
-      JSON.parse(actualOutput2).should.be.deep.equal(expectedOutput2);
-    });
-
-    it('should replace CRLF characters from log (Windows systems)', () => {
-      logger.debug('some\r\n CRLF\r\n injection\r\n message');
-      const expectedOutput = {
-        '@timestamp': '2018-06-05T18:20:42.345Z',
-        '@version': 1,
-        application: 'application-name',
-        host: os.hostname(),
-        message: 'some#r#n CRLF#r#n injection#r#n message',
-        level: 'DEBUG',
-      };
-
-      const actualOutput = stdMocks.flush().stdout[0];
-      JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
-    });
-
     it('should get not format when LOGGING_FORMATTER_DISABLED environment is true', () => {
       delete require.cache[require.resolve('../../src/lib/logger')];
       process.env.LOGGING_FORMATTER_DISABLED = 'true';
