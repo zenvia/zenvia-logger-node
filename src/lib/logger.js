@@ -10,25 +10,7 @@ const rTrace = require('cls-rtracer');
 
 const appPackage = require(path.join(appRootDir, 'package'));
 
-const sanitizeInfo = (info) => {
-  const sanitizeCRLFInjection = (str) => str
-    .replace(/\n|\r/g, (x) => (x === '\n' ? '#n' : '#r'));
-
-  Object.keys(info).forEach((key) => {
-    if (typeof info[key] === 'string') {
-      info[key] = sanitizeCRLFInjection(info[key]);
-      return;
-    }
-
-    if (info[key] instanceof Function) {
-      delete info[key];
-    }
-  });
-};
-
 const customFormatJson = winston.format((info) => {
-  sanitizeInfo(info);
-
   let stack;
 
   if (info.stack) {
@@ -48,6 +30,12 @@ const customFormatJson = winston.format((info) => {
     stack_trace: stack,
     traceId: rTrace.id(),
   };
+
+  Object.keys(info).forEach((key) => {
+    if (info[key] instanceof Function) {
+      delete info[key];
+    }
+  });
 
   return info;
 });
