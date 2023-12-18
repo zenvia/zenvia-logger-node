@@ -30,7 +30,7 @@ jobs:
     - name: Run lint
       run: npm run lint
     - name: Run test
-      run: npm run test:coveralls
+      run: npm test
     - name: Coveralls
       uses: coverallsapp/github-action@v2
       with:

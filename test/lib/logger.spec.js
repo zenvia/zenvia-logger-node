@@ -70,6 +70,21 @@ describe('Logger test', () => {
       JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
     });
 
+    it('should remove attributes that are log functions, leaving only the @timestamp, application, message and level fields', () => {
+      logger.info('some message', { field1: () => {} });
+      const expectedOutput = {
+        '@timestamp': '2018-06-05T18:20:42.345Z',
+        '@version': 1,
+        application: 'application-name',
+        host: os.hostname(),
+        message: 'some message',
+        level: 'INFO',
+      };
+
+      const actualOutput = stdMocks.flush().stdout[0];
+      JSON.parse(actualOutput).should.be.deep.equal(expectedOutput);
+    });
+
     it('should log @timestamp, application, message, level and environment fields', () => {
       process.env.NODE_ENV = 'test';
       logger.info('some message');
