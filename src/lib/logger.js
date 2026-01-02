@@ -114,3 +114,4 @@ logger.realLog = logger.log;
 logger.log = logFn;
 
 module.exports = logger;
+module.exports.default = logger;

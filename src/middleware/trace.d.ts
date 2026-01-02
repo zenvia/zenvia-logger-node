@@ -1,9 +1,10 @@
 import rTracer from 'cls-rtracer';
 
-declare const traceMiddleware: () =>
+export type TracerMiddlewareResult =
   ReturnType<typeof rTracer.expressMiddleware> |
   ReturnType<typeof rTracer.fastifyPlugin> |
   typeof rTracer.hapiPlugin |
   ReturnType<typeof rTracer.koaMiddleware>;
 
-export default traceMiddleware;
+declare const traceMiddlewareFactory: () => TracerMiddlewareResult;
+export default traceMiddlewareFactory;
