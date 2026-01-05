@@ -223,6 +223,61 @@ Log Output
 }
 ```
 
+## Contextual Logging (Async Context)
+
+You can use `runWithContext` and `addContext` to manage metadata context across asynchronous flows (like Kafka consumers or complex background jobs). This ensures all logs within a specific execution thread share the same context without passing a logger instance manually.
+
+### Basic Usage with runWithContext
+
+Useful for isolating logs from different event sources or partitions.
+
+```js
+import logger from '@zenvia/logger';
+
+async function handleEvent(event) {
+  await logger.runWithContext({
+    partition: event.partition,
+    topic: 'orders-topic'
+  }, async () => {
+    // All logs here will include partition and topic automatically
+    logger.info('Processing started');
+    await processOrder(event.data);
+  });
+}
+```
+
+### Enriching Context with addContext
+
+You can inject new metadata into the current context at any point during the execution.
+
+```js
+import logger from '@zenvia/logger';
+
+async function processOrder(data) {
+  logger.info('Validating...');
+
+  const provider = await api.getProvider(data.id);
+
+  // Mutates the current context to include providerId in all subsequent logs
+  logger.addContext({ providerId: provider.id });
+
+  logger.info('Validation complete');
+  // Output JSON will contain: partition, topic AND providerId
+}
+```
+
+### Nested Contexts
+
+Contexts can be nested. The inner context will inherit metadata from the parent.
+
+```js
+await logger.runWithContext({ level1: 'A' }, async () => {
+  await logger.runWithContext({ level2: 'B' }, async () => {
+    logger.info('Log with A and B');
+  });
+});
+```
+
 ## License
 
 [MIT](LICENSE.md)

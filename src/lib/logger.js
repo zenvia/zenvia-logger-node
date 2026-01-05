@@ -7,8 +7,11 @@ const winston = require('winston');
 const path = require('path');
 const appRootDir = require('app-root-dir').get();
 const rTrace = require('cls-rtracer');
+const { AsyncLocalStorage } = require('node:async_hooks');
 
 const appPackage = require(path.join(appRootDir, 'package'));
+
+const loggerStorage = new AsyncLocalStorage();
 
 const customFormatJson = winston.format((info) => {
   let stack;
@@ -55,7 +58,7 @@ const createConsoleTransport = () => new winston.transports.Console({
   stderrLevels: ['fatal', 'error'],
 });
 
-const logger = winston.createLogger({
+const baseLogger = winston.createLogger({
   levels: {
     fatal: 0,
     error: 1,
@@ -74,6 +77,11 @@ const logger = winston.createLogger({
   exitOnError: false,
 });
 
+function getActiveLogger() {
+  const store = loggerStorage.getStore();
+  return store ? store.current : baseLogger;
+}
+
 function leveledLogFn(level) {
   return function log(...args) {
     return logFn(level, ...args);
@@ -81,8 +89,9 @@ function leveledLogFn(level) {
 }
 
 function logFn(level, msg) {
+  const currentLogger = getActiveLogger();
   if (arguments.length === 1 && typeof level !== 'object') {
-    return logger;
+    return currentLogger;
   }
   if (arguments.length === 2) {
     if (msg && typeof msg === 'object') {
@@ -93,25 +102,43 @@ function logFn(level, msg) {
       };
     }
   }
-  return logger.realLog(...arguments);
+  return currentLogger.log(...arguments);
 }
 
 function isLevelEnabledFn(level) {
   return function isLevelEnabled() {
-    return logger.isLevelEnabled(level);
+    return getActiveLogger().isLevelEnabled(level);
   };
 }
 
-logger.fatal = leveledLogFn('fatal');
-logger.error = leveledLogFn('error');
-logger.warn = leveledLogFn('warn');
-logger.info = leveledLogFn('info');
-logger.debug = leveledLogFn('debug');
-logger.verbose = leveledLogFn('verbose');
-logger.silly = leveledLogFn('silly');
-logger.isFatalEnabled = isLevelEnabledFn('fatal');
-logger.realLog = logger.log;
-logger.log = logFn;
+const logger = {
+  ...baseLogger,
+
+  fatal: leveledLogFn('fatal'),
+  error: leveledLogFn('error'),
+  warn: leveledLogFn('warn'),
+  info: leveledLogFn('info'),
+  debug: leveledLogFn('debug'),
+  verbose: leveledLogFn('verbose'),
+  silly: leveledLogFn('silly'),
+  log: logFn,
+  isFatalEnabled: isLevelEnabledFn('fatal'),
+
+  runWithContext: (context, fn) => {
+    const parentLogger = loggerStorage.getStore()?.current || baseLogger;
+    const child = parentLogger.child(context);
+    return loggerStorage.run({ current: child }, fn);
+  },
+
+  addContext: (context) => {
+    const store = loggerStorage.getStore();
+    if (store) {
+      store.current = store.current.child(context);
+    } else {
+      baseLogger.warn('Attempted to call addContext outside of an AsyncLocalStorage context');
+    }
+  },
+};
 
 module.exports = logger;
 module.exports.default = logger;
