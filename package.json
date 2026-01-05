@@ -31,6 +31,9 @@
     "Zenvia",
     "Winston"
   ],
+  "engines": {
+    "node": ">=16.4.0"
+  },
   "dependencies": {
     "app-root-dir": "^1.0.2",
     "cls-rtracer": "^2.6.3",

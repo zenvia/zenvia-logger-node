@@ -299,4 +299,89 @@ describe('Logger test', () => {
       obj.should.not.have.property('level');
     });
   });
+
+  describe('Contextual Logging (AsyncLocalStorage)', () => {
+    it('should maintain context metadata across async calls using runWithContext', async () => {
+      await logger.runWithContext({ partition: 1024, topic: 'my-topic' }, async () => {
+        await Promise.resolve();
+
+        logger.info('message inside context');
+
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('partition').and.be.equal(1024);
+        output.should.have.property('topic').and.be.equal('my-topic');
+        output.should.have.property('message').and.be.equal('message inside context');
+      });
+    });
+
+    it('should update context metadata using addContext (mutation)', async () => {
+      await logger.runWithContext({ requestId: 'initial-id' }, async () => {
+        logger.info('first log');
+        const output1 = JSON.parse(stdMocks.flush().stdout[0]);
+        output1.should.not.have.property('providerId');
+
+        logger.addContext({ providerId: 'zenvia-123' });
+
+        logger.info('second log');
+        const output2 = JSON.parse(stdMocks.flush().stdout[0]);
+        output2.should.have.property('requestId').and.be.equal('initial-id');
+        output2.should.have.property('providerId').and.be.equal('zenvia-123');
+      });
+    });
+
+    it('should warn when addContext is called outside of an active context', () => {
+      logger.addContext({ some: 'data' });
+
+      const actualOutput = stdMocks.flush().stdout[0];
+      const parsedOutput = JSON.parse(actualOutput);
+
+      parsedOutput.should.have.property('level').and.be.equal('WARN');
+      parsedOutput.should.have.property('message').and.be.equal('Attempted to call addContext outside of an AsyncLocalStorage context');
+    });
+
+    it('should isolate contexts between concurrent executions', async () => {
+      const flow1 = logger.runWithContext({ flow: 1 }, async () => {
+        await Promise.resolve();
+        logger.info('log flow 1');
+      });
+
+      const flow2 = logger.runWithContext({ flow: 2 }, async () => {
+        await Promise.resolve();
+        logger.info('log flow 2');
+      });
+
+      await Promise.all([flow1, flow2]);
+
+      const logs = stdMocks.flush().stdout.map((line) => JSON.parse(line));
+
+      const logFlow2 = logs.find((l) => l.message === 'log flow 2');
+      const logFlow1 = logs.find((l) => l.message === 'log flow 1');
+
+      logFlow2.should.have.property('flow').and.be.equal(2);
+      logFlow1.should.have.property('flow').and.be.equal(1);
+    });
+
+    it('should not leak metadata to logs outside of context', async () => {
+      await logger.runWithContext({ internal: 'secret' }, async () => {
+        logger.info('inside');
+      });
+
+      logger.info('outside');
+
+      const outputs = stdMocks.flush().stdout.map((line) => JSON.parse(line));
+      outputs[0].should.have.property('internal').and.be.equal('secret');
+      outputs[1].should.not.have.property('internal');
+    });
+
+    it('should allow nested contexts (re-nesting via runWithContext)', async () => {
+      await logger.runWithContext({ level1: 'a' }, async () => {
+        await logger.runWithContext({ level2: 'b' }, async () => {
+          logger.info('nested log');
+          const output = JSON.parse(stdMocks.flush().stdout[0]);
+          output.should.have.property('level1').and.be.equal('a');
+          output.should.have.property('level2').and.be.equal('b');
+        });
+      });
+    });
+  });
 });
