@@ -1,6 +1,6 @@
 import { Logger, LeveledLogMethod } from 'winston';
 
-interface ZenviaLogger extends Logger {
+export interface ZenviaLogger extends Logger {
   fatal: LeveledLogMethod;
   isFatalEnabled(): boolean;
 }

@@ -1,6 +1,6 @@
 const rTracer = require('cls-rtracer');
 
-module.exports = () => {
+const traceMiddlewareFactory = () => {
   const frameworkMiddleware = process.env.LOGGING_FRAMEWORK_MIDDLEWARE;
 
   const RTRACER_OPTIONS = {
@@ -23,3 +23,7 @@ module.exports = () => {
 
   return middleware[frameworkMiddleware || 'EXPRESS'];
 };
+
+module.exports = traceMiddlewareFactory;
+module.exports.traceMiddleware = traceMiddlewareFactory;
+module.exports.default = traceMiddlewareFactory;

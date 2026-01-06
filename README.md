@@ -1,6 +1,11 @@
 # Zenvia Logger for Node.js
 
-A wrapper for [Winston](https://github.com/winstonjs/winston) Logging [Node.js](https://nodejs.org/) library that formats the output on STDOUT as [Logstash](https://www.elastic.co/logstash) JSON format. Since version 1.5.0 it is possible to use log tracking. Zenvia Logger uses the [cls-trace](https://www.npmjs.com/package/cls-rtracer) to perform the tracking
+A wrapper for [Winston](https://github.com/winstonjs/winston) Logging [Node.js](https://nodejs.org/) library that formats the output on STDOUT as [Logstash](https://www.elastic.co/logstash) JSON format.
+
+**Main features:**
+- **Dual Package Support:** Native support for both **ES Modules (ESM)** and **CommonJS (CJS)**.
+- **Node 24 Ready:** Optimized for native TypeScript execution (Type Stripping).
+- **Distributed Tracing:** Automated request tracking using [cls-rtracer](https://www.npmjs.com/package/cls-rtracer).
 
 [![License](https://img.shields.io/github/license/zenvia/zenvia-logger-node.svg)](LICENSE.md)
 [![Build Status](https://travis-ci.com/zenvia/zenvia-logger-node.svg?branch=master)](https://travis-ci.com/zenvia/zenvia-logger-node)
