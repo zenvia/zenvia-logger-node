@@ -106,7 +106,7 @@ Output:
 }
 ```
 
-### Available logging levels
+## Available logging levels
 
 The log levels are as follows.
 
@@ -120,7 +120,7 @@ For backward compatibility purposes, **"verbose"** and **"silly"** levels will b
 
 
 
-### Adding extra key/value fields
+## Adding extra key/value fields
 
 ```js
 logger.debug('Some text message', { keyA: 'value A', keyB: 'value B' });
@@ -140,7 +140,7 @@ Output:
 }
 ```
 
-### Logging errors
+## Logging errors
 
 ```js
 logger.error('Ops!', new Error('Something goes wrong'));
@@ -179,7 +179,7 @@ Output:
 }
 ```
 
-### Using trace logs
+## Using trace logs
 From version 1.5.0 it is possible to track logs. To do traceability, the cls-rTrace package is used. To use it, just add the middleware in the framework you are using. In this way it is possible to propagate the traceId received in a request to the logs throughout your project. If no traceId is passed in the request, Zenvia Logger generates a random traceId for the request being processed.
 
 **Request example sending traceId:**
