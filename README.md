@@ -8,12 +8,12 @@ A wrapper for [Winston](https://github.com/winstonjs/winston) Logging [Node.js](
 - **Distributed Tracing:** Automated request tracking using [cls-rtracer](https://www.npmjs.com/package/cls-rtracer).
 
 [![License](https://img.shields.io/github/license/zenvia/zenvia-logger-node.svg)](LICENSE.md)
-[![Build Status](https://travis-ci.com/zenvia/zenvia-logger-node.svg?branch=master)](https://travis-ci.com/zenvia/zenvia-logger-node)
+[![NPM Version](https://img.shields.io/npm/v/%40zenvia%2Flogger)](https://www.npmjs.com/package/@zenvia/logger)
 [![Coverage Status](https://coveralls.io/repos/github/zenvia/zenvia-logger-node/badge.svg?branch=master)](https://coveralls.io/github/zenvia/zenvia-logger-node?branch=master)
-[![Dependencies](https://img.shields.io/david/zenvia/zenvia-logger-node.svg)](https://david-dm.org/zenvia/zenvia-logger-node)
+
+[![NPM](https://nodei.co/npm/@zenvia/logger.svg)](https://nodei.co/npm/@zenvia/logger/)
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/ZENVIA_.svg?style=social)](https://twitter.com/intent/follow?screen_name=ZENVIA_)
-
 
 
 ## Installation
