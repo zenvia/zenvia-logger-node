@@ -40,4 +40,6 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
-      - run: npm publish --provenance
+      - run: |
+          unset NODE_AUTH_TOKEN
+          npm publish --provenance
