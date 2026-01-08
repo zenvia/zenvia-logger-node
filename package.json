@@ -1,6 +1,6 @@
 {
   "name": "@zenvia/logger",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A wrapper for Winston Logging Node.js library that formats the output on STDOUT as Logstash JSON format.",
   "license": "MIT",
   "main": "./src/index",
