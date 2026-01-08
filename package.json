@@ -20,7 +20,7 @@
   "homepage": "https://github.com/zenvia/zenvia-logger-node#readme",
   "repository": {
     "type": "git",
-    "url": "git@github.com:zenvia/zenvia-logger-node.git"
+    "url": "git+ssh://git@github.com/zenvia/zenvia-logger-node.git"
   },
   "bugs": {
     "url": "https://github.com/zenvia/zenvia-logger-node/issues"
