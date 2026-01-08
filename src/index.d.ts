@@ -2,10 +2,9 @@
 import { ZenviaLogger } from './lib/logger';
 import traceMiddlewareFactory from './middleware/trace';
 
-type TraceMiddlewareInstance = ReturnType<typeof traceMiddlewareFactory>;
 type ZenviaLoggerModule = ZenviaLogger & {
   default: ZenviaLogger;
-  traceMiddleware: TraceMiddlewareInstance;
+  traceMiddleware: typeof traceMiddlewareFactory;
 };
 
 declare const loggerModule: ZenviaLoggerModule;
