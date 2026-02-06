@@ -77,68 +77,52 @@ const baseLogger = winston.createLogger({
   exitOnError: false,
 });
 
-function getActiveLogger() {
+const originalLog = baseLogger.log.bind(baseLogger);
+
+baseLogger.log = function log(level, msg) {
   const store = loggerStorage.getStore();
-  return store ? store.current : baseLogger;
-}
 
-function leveledLogFn(level) {
-  return function log(...args) {
-    return logFn(level, ...args);
-  };
-}
-
-function logFn(level, msg) {
-  const currentLogger = getActiveLogger();
-  if (arguments.length === 1 && typeof level !== 'object') {
-    return currentLogger;
+  if (store && store.current) {
+    return store.current.log(...arguments);
   }
+
   if (arguments.length === 2) {
     if (msg && typeof msg === 'object') {
-      msg = {
+      const newMsg = {
         message: msg.message,
         stack: msg.stack,
         ...msg,
       };
+
+      return originalLog(level, newMsg);
     }
   }
-  return currentLogger.log(...arguments);
-}
 
-function isLevelEnabledFn(level) {
-  return function isLevelEnabled() {
-    return getActiveLogger().isLevelEnabled(level);
-  };
-}
-
-const logger = {
-  ...baseLogger,
-
-  fatal: leveledLogFn('fatal'),
-  error: leveledLogFn('error'),
-  warn: leveledLogFn('warn'),
-  info: leveledLogFn('info'),
-  debug: leveledLogFn('debug'),
-  verbose: leveledLogFn('verbose'),
-  silly: leveledLogFn('silly'),
-  log: logFn,
-  isFatalEnabled: isLevelEnabledFn('fatal'),
-
-  runWithContext: (context, fn) => {
-    const parentLogger = loggerStorage.getStore()?.current || baseLogger;
-    const child = parentLogger.child(context);
-    return loggerStorage.run({ current: child }, fn);
-  },
-
-  addContext: (context) => {
-    const store = loggerStorage.getStore();
-    if (store) {
-      store.current = store.current.child(context);
-    } else {
-      baseLogger.warn('Attempted to call addContext outside of an AsyncLocalStorage context');
-    }
-  },
+  return originalLog(...arguments);
 };
 
-module.exports = logger;
-module.exports.default = logger;
+baseLogger.runWithContext = (context, fn) => {
+  const parentLogger = loggerStorage.getStore()?.current || baseLogger;
+  const child = parentLogger.child(context);
+
+  return loggerStorage.run({ current: child }, fn);
+};
+
+baseLogger.addContext = (context) => {
+  const store = loggerStorage.getStore();
+
+  if (store) {
+    store.current = store.current.child(context);
+  } else {
+    originalLog('warn', 'Attempted to call addContext outside of an AsyncLocalStorage context');
+  }
+};
+
+baseLogger.fatal = function fatal(msg, meta) {
+  return this.log('fatal', msg, meta);
+};
+
+baseLogger.isFatalEnabled = () => baseLogger.isLevelEnabled('fatal');
+
+module.exports = baseLogger;
+module.exports.default = baseLogger;
