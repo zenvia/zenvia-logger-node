@@ -197,7 +197,7 @@ function injectContext(args) {
     if (typeof newArgs[1] === 'object') {
       metaIndex = 1;
     }
-  } else if (newArgs.length >= 3) {
+  } else {
     // logger.log('level', 'msg', obj)
     metaIndex = 2;
   }
