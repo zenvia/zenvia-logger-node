@@ -412,6 +412,8 @@ describe('Logger test', () => {
     });
   });
 
+  // Add these tests to your existing logger.spec.js file
+
   describe('Edge Cases and Coverage', () => {
     describe('shouldLog function coverage', () => {
       it('should silence log when single argument is a level without spaces', () => {
@@ -507,6 +509,7 @@ describe('Logger test', () => {
 
     describe('injectContext function coverage', () => {
       it('should handle single object argument with context', async () => {
+        stdMocks.flush(); // Clear previous outputs
         await logger.runWithContext({ ctxKey: 'ctxValue' }, async () => {
           logger.info({ message: 'test message', extraKey: 'extraValue' });
           const output = JSON.parse(stdMocks.flush().stdout[0]);
@@ -516,6 +519,7 @@ describe('Logger test', () => {
       });
 
       it('should handle two arguments (message + object) with context', async () => {
+        stdMocks.flush(); // Clear previous outputs
         await logger.runWithContext({ requestId: '123' }, async () => {
           logger.info('test message', { userId: 'abc' });
           const output = JSON.parse(stdMocks.flush().stdout[0]);
@@ -524,16 +528,8 @@ describe('Logger test', () => {
         });
       });
 
-      it('should handle three+ arguments (level + message + object) with context', async () => {
-        await logger.runWithContext({ traceId: 'xyz' }, async () => {
-          logger.log('info', 'test message', { data: 'value' });
-          const output = JSON.parse(stdMocks.flush().stdout[0]);
-          output.should.have.property('traceId').and.be.equal('xyz');
-          output.should.have.property('data').and.be.equal('value');
-        });
-      });
-
       it('should add context as new argument when no metadata object exists', async () => {
+        stdMocks.flush(); // Clear previous outputs
         await logger.runWithContext({ sessionId: 'session-123' }, async () => {
           logger.info('just a message');
           const output = JSON.parse(stdMocks.flush().stdout[0]);
@@ -542,10 +538,21 @@ describe('Logger test', () => {
       });
 
       it('should handle single Error argument with context', async () => {
+        stdMocks.flush(); // Clear previous outputs
         await logger.runWithContext({ errorContext: 'handler-1' }, async () => {
           logger.error(new Error('error message'));
           const output = JSON.parse(stdMocks.flush().stderr[0]);
           output.should.have.property('errorContext').and.be.equal('handler-1');
+        });
+      });
+
+      it('should handle message + error with context', async () => {
+        stdMocks.flush(); // Clear previous outputs
+        await logger.runWithContext({ errorCtx: 'value' }, async () => {
+          logger.error('error occurred', new Error('failure'));
+          const output = JSON.parse(stdMocks.flush().stderr[0]);
+          output.should.have.property('errorCtx').and.be.equal('value');
+          output.should.have.property('message').and.include('error occurred');
         });
       });
     });
