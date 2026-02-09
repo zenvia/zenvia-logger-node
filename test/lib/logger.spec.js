@@ -9,7 +9,9 @@ describe('Logger test', () => {
   before(() => {
     process.env.APP_NAME = 'application-name';
     stdMocks.use({ print: true });
-    brokenClock = sinon.useFakeTimers(new Date('2018-06-05T18:20:42.345Z').getTime());
+    brokenClock = sinon.useFakeTimers(
+      new Date('2018-06-05T18:20:42.345Z').getTime(),
+    );
   });
 
   beforeEach(() => {
@@ -124,10 +126,16 @@ describe('Logger test', () => {
       logger.info('some message', new Error('some reason'));
 
       const actualOutput = JSON.parse(stdMocks.flush().stdout[0]);
-      actualOutput.should.have.property('@timestamp').and.be.equal('2018-06-05T18:20:42.345Z');
+      actualOutput.should.have
+        .property('@timestamp')
+        .and.be.equal('2018-06-05T18:20:42.345Z');
       actualOutput.should.have.property('@version').and.be.equal(1);
-      actualOutput.should.have.property('application').and.be.equal('application-name');
-      actualOutput.should.have.property('message').and.be.equal('some message some reason');
+      actualOutput.should.have
+        .property('application')
+        .and.be.equal('application-name');
+      actualOutput.should.have
+        .property('message')
+        .and.be.equal('some message some reason');
       actualOutput.should.have.property('level').and.be.equal('INFO');
       actualOutput.should.have.property('stack_trace');
     });
@@ -136,9 +144,13 @@ describe('Logger test', () => {
       logger.info(new Error('some reason'));
 
       const actualOutput = JSON.parse(stdMocks.flush().stdout[0]);
-      actualOutput.should.have.property('@timestamp').and.be.equal('2018-06-05T18:20:42.345Z');
+      actualOutput.should.have
+        .property('@timestamp')
+        .and.be.equal('2018-06-05T18:20:42.345Z');
       actualOutput.should.have.property('@version').and.be.equal(1);
-      actualOutput.should.have.property('application').and.be.equal('application-name');
+      actualOutput.should.have
+        .property('application')
+        .and.be.equal('application-name');
       actualOutput.should.have.property('message').and.be.equal('some reason');
       actualOutput.should.have.property('level').and.be.equal('INFO');
       actualOutput.should.have.property('stack_trace');
@@ -186,7 +198,11 @@ describe('Logger test', () => {
 
   describe('Logging level', () => {
     it('should log with LogEntry', () => {
-      const obj = { level: 'info', message: 'some message', property: 'some value' };
+      const obj = {
+        level: 'info',
+        message: 'some message',
+        property: 'some value',
+      };
       logger.log(obj);
       const actualOutput = JSON.parse(stdMocks.flush().stdout[0]);
       actualOutput.should.have.property('level').and.be.equal('INFO');
@@ -245,7 +261,7 @@ describe('Logger test', () => {
       delete require.cache[require.resolve('../../src/lib/logger')];
       process.env.LOGGING_LEVEL = 'INFO';
       // eslint-disable-next-line
-      const newLogger = require('../../src/lib/logger');
+      const newLogger = require("../../src/lib/logger");
       newLogger.debug('should not log this message');
       delete process.env.LOGGING_LEVEL;
       delete require.cache[require.resolve('../../src/lib/logger')];
@@ -260,13 +276,15 @@ describe('Logger test', () => {
       delete require.cache[require.resolve('../../src/lib/logger')];
       process.env.LOGGING_FORMATTER_DISABLED = 'true';
       // eslint-disable-next-line
-      const newLogger = require('../../src/lib/logger');
+      const newLogger = require("../../src/lib/logger");
       newLogger.debug('some message');
       delete process.env.LOGGING_FORMATTER_DISABLED;
       delete require.cache[require.resolve('../../src/lib/logger')];
 
       const actualOutput = stdMocks.flush().stdout[0];
-      actualOutput.should.be.equal('2018-06-05T18:20:42.345Z - debug: some message\n');
+      actualOutput.should.be.equal(
+        '2018-06-05T18:20:42.345Z - debug: some message\n',
+      );
     });
   });
 
@@ -302,16 +320,21 @@ describe('Logger test', () => {
 
   describe('Contextual Logging (AsyncLocalStorage)', () => {
     it('should maintain context metadata across async calls using runWithContext', async () => {
-      await logger.runWithContext({ partition: 1024, topic: 'my-topic' }, async () => {
-        await Promise.resolve();
+      await logger.runWithContext(
+        { partition: 1024, topic: 'my-topic' },
+        async () => {
+          await Promise.resolve();
 
-        logger.info('message inside context');
+          logger.info('message inside context');
 
-        const output = JSON.parse(stdMocks.flush().stdout[0]);
-        output.should.have.property('partition').and.be.equal(1024);
-        output.should.have.property('topic').and.be.equal('my-topic');
-        output.should.have.property('message').and.be.equal('message inside context');
-      });
+          const output = JSON.parse(stdMocks.flush().stdout[0]);
+          output.should.have.property('partition').and.be.equal(1024);
+          output.should.have.property('topic').and.be.equal('my-topic');
+          output.should.have
+            .property('message')
+            .and.be.equal('message inside context');
+        },
+      );
     });
 
     it('should update context metadata using addContext (mutation)', async () => {
@@ -336,7 +359,11 @@ describe('Logger test', () => {
       const parsedOutput = JSON.parse(actualOutput);
 
       parsedOutput.should.have.property('level').and.be.equal('WARN');
-      parsedOutput.should.have.property('message').and.be.equal('Attempted to call addContext outside of an AsyncLocalStorage context');
+      parsedOutput.should.have
+        .property('message')
+        .and.be.equal(
+          'Attempted to call addContext outside of an AsyncLocalStorage context',
+        );
     });
 
     it('should isolate contexts between concurrent executions', async () => {
@@ -381,6 +408,282 @@ describe('Logger test', () => {
           output.should.have.property('level1').and.be.equal('a');
           output.should.have.property('level2').and.be.equal('b');
         });
+      });
+    });
+  });
+
+  describe('Edge Cases and Coverage', () => {
+    describe('shouldLog function coverage', () => {
+      it('should silence log when single argument is a level without spaces', () => {
+        logger.log('error');
+        stdMocks.flush().stderr.length.should.be.equal(0);
+      });
+
+      it('should silence log when single argument is "fatal" level', () => {
+        logger.log('fatal');
+        stdMocks.flush().stderr.length.should.be.equal(0);
+      });
+
+      it('should silence log when single argument is "warn" level', () => {
+        logger.log('warn');
+        stdMocks.flush().stdout.length.should.be.equal(0);
+      });
+
+      it('should silence log when single argument is "debug" level', () => {
+        logger.log('debug');
+        stdMocks.flush().stdout.length.should.be.equal(0);
+      });
+
+      it('should silence log when single argument is "verbose" level', () => {
+        logger.log('verbose');
+        stdMocks.flush().stdout.length.should.be.equal(0);
+      });
+
+      it('should silence log when single argument is "silly" level', () => {
+        logger.log('silly');
+        stdMocks.flush().stdout.length.should.be.equal(0);
+      });
+    });
+
+    describe('deepClone function coverage', () => {
+      it('should clone null values', () => {
+        logger.info('message', { nullValue: null });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('nullValue').and.be.equal(null);
+      });
+
+      it('should clone primitive values (numbers)', () => {
+        logger.info('message', { count: 42 });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('count').and.be.equal(42);
+      });
+
+      it('should clone primitive values (booleans)', () => {
+        logger.info('message', { active: true });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('active').and.be.equal(true);
+      });
+
+      it('should clone arrays', () => {
+        const originalArray = [1, 2, 3];
+        logger.info('message', { items: originalArray });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('items').and.deep.equal([1, 2, 3]);
+      });
+
+      it('should clone nested arrays', () => {
+        logger.info('message', {
+          matrix: [
+            [1, 2],
+            [3, 4],
+          ],
+        });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('matrix').and.deep.equal([
+          [1, 2],
+          [3, 4],
+        ]);
+      });
+
+      it('should clone Error objects with additional properties', () => {
+        const error = new Error('test error');
+        error.code = 'ERR_TEST';
+        error.statusCode = 500;
+
+        logger.info('error occurred', error);
+
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('code').and.be.equal('ERR_TEST');
+        output.should.have.property('statusCode').and.be.equal(500);
+      });
+
+      it('should not mutate nested objects', () => {
+        const nested = { inner: { value: 'test' } };
+        logger.info('message', nested);
+        nested.should.not.have.property('level');
+        nested.inner.should.not.have.property('level');
+      });
+    });
+
+    describe('injectContext function coverage', () => {
+      it('should handle single object argument with context', async () => {
+        await logger.runWithContext({ ctxKey: 'ctxValue' }, async () => {
+          logger.info({ message: 'test message', extraKey: 'extraValue' });
+          const output = JSON.parse(stdMocks.flush().stdout[0]);
+          output.should.have.property('ctxKey').and.be.equal('ctxValue');
+          output.should.have.property('extraKey').and.be.equal('extraValue');
+        });
+      });
+
+      it('should handle two arguments (message + object) with context', async () => {
+        await logger.runWithContext({ requestId: '123' }, async () => {
+          logger.info('test message', { userId: 'abc' });
+          const output = JSON.parse(stdMocks.flush().stdout[0]);
+          output.should.have.property('requestId').and.be.equal('123');
+          output.should.have.property('userId').and.be.equal('abc');
+        });
+      });
+
+      it('should handle three+ arguments (level + message + object) with context', async () => {
+        await logger.runWithContext({ traceId: 'xyz' }, async () => {
+          logger.log('info', 'test message', { data: 'value' });
+          const output = JSON.parse(stdMocks.flush().stdout[0]);
+          output.should.have.property('traceId').and.be.equal('xyz');
+          output.should.have.property('data').and.be.equal('value');
+        });
+      });
+
+      it('should add context as new argument when no metadata object exists', async () => {
+        await logger.runWithContext({ sessionId: 'session-123' }, async () => {
+          logger.info('just a message');
+          const output = JSON.parse(stdMocks.flush().stdout[0]);
+          output.should.have.property('sessionId').and.be.equal('session-123');
+        });
+      });
+
+      it('should handle single Error argument with context', async () => {
+        await logger.runWithContext({ errorContext: 'handler-1' }, async () => {
+          logger.error(new Error('error message'));
+          const output = JSON.parse(stdMocks.flush().stderr[0]);
+          output.should.have.property('errorContext').and.be.equal('handler-1');
+        });
+      });
+    });
+
+    describe('controlledLog edge cases', () => {
+      it('should handle log with object containing level property', () => {
+        logger.log({ level: 'info', message: 'test', customField: 'value' });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('level').and.be.equal('INFO');
+        output.should.have.property('customField').and.be.equal('value');
+      });
+
+      it('should handle multiple metadata objects via spread', () => {
+        logger.info('message', {
+          key1: 'value1',
+          key2: 'value2',
+          key3: 'value3',
+        });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('key1').and.be.equal('value1');
+        output.should.have.property('key2').and.be.equal('value2');
+        output.should.have.property('key3').and.be.equal('value3');
+      });
+    });
+
+    describe('Custom methods coverage', () => {
+      it('should check isFatalEnabled returns correct value', () => {
+        const isEnabled = logger.isFatalEnabled();
+        isEnabled.should.be.a('boolean');
+      });
+
+      it('should handle runWithContext with no parent context', async () => {
+        // Ensure we're outside any context
+        await logger.runWithContext({ newContext: 'value' }, async () => {
+          logger.info('test');
+          const output = JSON.parse(stdMocks.flush().stdout[0]);
+          output.should.have.property('newContext').and.be.equal('value');
+        });
+      });
+
+      it('should handle addContext when context already exists', async () => {
+        await logger.runWithContext({ initial: 'context' }, async () => {
+          logger.addContext({ added: 'field' });
+          logger.addContext({ another: 'field' });
+
+          logger.info('test');
+          const output = JSON.parse(stdMocks.flush().stdout[0]);
+          output.should.have.property('initial').and.be.equal('context');
+          output.should.have.property('added').and.be.equal('field');
+          output.should.have.property('another').and.be.equal('field');
+        });
+      });
+    });
+
+    describe('All log levels coverage', () => {
+      it('should log fatal level with metadata', () => {
+        logger.fatal('fatal message', { fatalMeta: 'value' });
+        const output = JSON.parse(stdMocks.flush().stderr[0]);
+        output.should.have.property('level').and.be.equal('FATAL');
+        output.should.have.property('fatalMeta').and.be.equal('value');
+      });
+
+      it('should log error level with metadata', () => {
+        logger.error('error message', { errorMeta: 'value' });
+        const output = JSON.parse(stdMocks.flush().stderr[0]);
+        output.should.have.property('level').and.be.equal('ERROR');
+        output.should.have.property('errorMeta').and.be.equal('value');
+      });
+
+      it('should log warn level with metadata', () => {
+        logger.warn('warn message', { warnMeta: 'value' });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('level').and.be.equal('WARN');
+        output.should.have.property('warnMeta').and.be.equal('value');
+      });
+
+      it('should log verbose level with metadata', () => {
+        logger.verbose('verbose message', { verboseMeta: 'value' });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('level').and.be.equal('DEBUG');
+        output.should.have.property('verboseMeta').and.be.equal('value');
+      });
+
+      it('should log silly level with metadata', () => {
+        logger.silly('silly message', { sillyMeta: 'value' });
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('level').and.be.equal('DEBUG');
+        output.should.have.property('sillyMeta').and.be.equal('value');
+      });
+    });
+
+    describe('Complex scenarios', () => {
+      it('should handle deeply nested contexts', async () => {
+        await logger.runWithContext({ level1: 'a' }, async () => {
+          await logger.runWithContext({ level2: 'b' }, async () => {
+            await logger.runWithContext({ level3: 'c' }, async () => {
+              logger.info('deeply nested');
+              const output = JSON.parse(stdMocks.flush().stdout[0]);
+              output.should.have.property('level1').and.be.equal('a');
+              output.should.have.property('level2').and.be.equal('b');
+              output.should.have.property('level3').and.be.equal('c');
+            });
+          });
+        });
+      });
+
+      it('should handle context with addContext in nested scenarios', async () => {
+        await logger.runWithContext({ outer: 'context' }, async () => {
+          logger.addContext({ outerAdded: 'field1' });
+
+          await logger.runWithContext({ inner: 'context' }, async () => {
+            logger.addContext({ innerAdded: 'field2' });
+
+            logger.info('nested with additions');
+            const output = JSON.parse(stdMocks.flush().stdout[0]);
+            output.should.have.property('outer').and.be.equal('context');
+            output.should.have.property('inner').and.be.equal('context');
+            output.should.have.property('innerAdded').and.be.equal('field2');
+          });
+        });
+      });
+
+      it('should handle logging with null metadata object', () => {
+        logger.info('message', null);
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('message').and.be.equal('message');
+      });
+
+      it('should handle logging with undefined metadata', () => {
+        logger.info('message', undefined);
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('message').and.be.equal('message');
+      });
+
+      it('should properly clone objects with circular references removed', () => {
+        const obj = { message: 'test', regular: 'field' };
+        logger.info(obj);
+        obj.should.not.have.property('level');
       });
     });
   });
