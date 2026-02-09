@@ -410,9 +410,20 @@ describe('Logger test', () => {
         });
       });
     });
-  });
 
-  // Add these tests to your existing logger.spec.js file
+    it('should inject context when using logger.log passing a LogEntry object', async () => {
+      await logger.runWithContext({ requestId: 'req-100' }, async () => {
+        logger.log({
+          level: 'info',
+          message: 'context check',
+        });
+
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('requestId').and.be.equal('req-100');
+        output.should.have.property('message').and.be.equal('context check');
+      });
+    });
+  });
 
   describe('Edge Cases and Coverage', () => {
     describe('shouldLog function coverage', () => {
@@ -443,6 +454,22 @@ describe('Logger test', () => {
 
       it('should silence log when single argument is "silly" level', () => {
         logger.log('silly');
+        stdMocks.flush().stdout.length.should.be.equal(0);
+      });
+
+      it('should silence log when called via logger.log() with no arguments', () => {
+        logger.log();
+        stdMocks.flush().stdout.length.should.be.equal(0);
+        stdMocks.flush().stderr.length.should.be.equal(0);
+      });
+
+      it('should silence log when called via logger.log() with a non-level string', () => {
+        logger.log('simple message without level');
+        stdMocks.flush().stdout.length.should.be.equal(0);
+      });
+
+      it('should silence log when single string argument is NOT a valid level', () => {
+        logger.log('NotALevelAndNoSpaces');
         stdMocks.flush().stdout.length.should.be.equal(0);
       });
     });
@@ -505,6 +532,24 @@ describe('Logger test', () => {
         nested.should.not.have.property('level');
         nested.inner.should.not.have.property('level');
       });
+
+      it('should clone Error objects preventing duplication of message/stack if enumerable', () => {
+        const err = new Error('custom error');
+
+        Object.defineProperty(err, 'message', {
+          enumerable: true,
+          value: 'custom msg',
+        });
+        Object.defineProperty(err, 'stack', {
+          enumerable: true,
+          value: 'custom stack',
+        });
+
+        logger.info(err);
+
+        const output = JSON.parse(stdMocks.flush().stdout[0]);
+        output.should.have.property('message').and.include('custom msg');
+      });
     });
 
     describe('injectContext function coverage', () => {
@@ -553,6 +598,16 @@ describe('Logger test', () => {
           const output = JSON.parse(stdMocks.flush().stderr[0]);
           output.should.have.property('errorCtx').and.be.equal('value');
           output.should.have.property('message').and.include('error occurred');
+        });
+      });
+
+      it('should append context as new argument when single argument is primitive', async () => {
+        await logger.runWithContext({ ctx: 'test-val' }, async () => {
+          try {
+            logger.log(12345);
+          } catch (error) {
+            error.message.should.match(/toUpperCase/);
+          }
         });
       });
     });
